@@ -76,13 +76,26 @@ export const deleteTask = async (req, res) => {
 }
 
 export const findAllDoneTasks = async (req, res) => {
-    const tasks = await Task.find({ done: true });
-    res.json(tasks);
+    try {
+        const tasks = await Task.find({ done: true });
+        res.json(tasks);
+    } catch (error) {
+        res.status(500).json({
+            message: error.message || "Something goes wrong retrieving the tasks"
+        })
+    }
 }
 
 export const updateTask = async (req, res) => {
-    await Task.findByIdAndUpdate(req.params.id, req.body)
+    const {id} = req.params;
+    try {
+        await Task.findByIdAndUpdate(id, req.body)
     res.json({
         message: "Task was updated successfully"
     })
+    } catch (error) {
+        res.status(500).json({
+            message: `Cannot update task with id: ${id}`
+        })
+    }
 }
